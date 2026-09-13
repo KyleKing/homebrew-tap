@@ -23,9 +23,11 @@ cask "wavez" do
 
   binary "wavez"
 
-  postflight do
-    Dir.glob(File.join(staged_path, "wavez*")).each do |f|
-      system_command "/usr/bin/xattr", args: ["-c", f], must_succeed: false
+  postflight_steps do
+    on_macos do
+      run "/usr/bin/xattr",
+          args:         ["-dr", "com.apple.quarantine", "{{staged_path}}"],
+          must_succeed: false
     end
   end
 
